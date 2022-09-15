@@ -2,6 +2,7 @@ package com.example.community_board.advice;
 
 import com.example.community_board.exception.board.BoardNotFoundException;
 import com.example.community_board.exception.board.ListNotFoundException;
+import com.example.community_board.exception.comment.NotFoundcommentsException;
 import com.example.community_board.response.Response;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.MethodArgumentNotValidException;
@@ -28,5 +29,11 @@ public class ExceptionAdvice {
     @ResponseStatus(HttpStatus.NOT_FOUND)
     public Response listNotFoundException() {
         return Response.failure(403, "조회하고자하는 리스트가 비어있습니다.");
+    }
+
+    @ExceptionHandler(NotFoundcommentsException.class)
+    @ResponseStatus(HttpStatus.NOT_FOUND)
+    public Response notFoundcommentsException() {
+        return Response.failure(400, "해당 게시물의 댓글이 존재하지 않습니다.");
     }
 }
