@@ -10,16 +10,13 @@ import java.time.LocalDate;
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
-public class CommentsListDto {
+public class CommentsResponseDto {
     private Long id;
     private String comment;
     private String writer;
     private LocalDate time;
 
-    public CommentsListDto(Comment comment){
-        this.id = comment.getId();
-        this.comment = comment.getComment();
-        this.writer = comment.getWriter();
-        this.time = comment.getTime();
+    public CommentsResponseDto toDto(Comment comment){
+        return new CommentsResponseDto(comment.getId(), comment.getComment(), comment.getWriter(), comment.getTime());
     }
 }

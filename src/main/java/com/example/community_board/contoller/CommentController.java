@@ -12,28 +12,35 @@ import javax.validation.Valid;
 
 @RestController
 @RequiredArgsConstructor
-@RequestMapping("/api/auth")
+@RequestMapping("/api")
 public class CommentController {
     private final CommentService commentService;
 
     // 댓글 작성
     @PostMapping("/comments/{id}")
     @ResponseStatus(HttpStatus.CREATED)
-    public Response createComments(@PathVariable Long id, @RequestBody @Valid CreateCommentsRequestDto createCommentsRequestDto){
-        return Response.success(commentService.createComments(id, createCommentsRequestDto));
+    public void createComments(@PathVariable Long id, @RequestBody @Valid CreateCommentsRequestDto createCommentsRequestDto){
+        commentService.createComments(id, createCommentsRequestDto);
+    }
+
+    // 게시글 별 댓글 조회
+    @GetMapping("/comments/{id}")
+    @ResponseStatus(HttpStatus.OK)
+    public Response getComments(@PathVariable Long id){
+        return Response.success(commentService.getComments(id));
     }
     
     // 댓글 수정
     @PutMapping("/comments/{id}")
     @ResponseStatus(HttpStatus.OK)
-    public Response editComments(@PathVariable Long id, @RequestBody @Valid EditCommentsRequestDto editCommentsRequestDto){
-        return Response.success(commentService.editComments(id, editCommentsRequestDto));
+    public void editComments(@PathVariable Long id, @RequestBody @Valid EditCommentsRequestDto editCommentsRequestDto){
+        commentService.editComments(id, editCommentsRequestDto);
     }
     
     // 댓글 삭제
     @DeleteMapping("/comments/{id}")
     @ResponseStatus(HttpStatus.OK)
-    public String deleteComment(@PathVariable Long id){
-        return commentService.deleteComment(id);
+    public void deleteComment(@PathVariable Long id){
+        commentService.deleteComment(id);
     }
 }
