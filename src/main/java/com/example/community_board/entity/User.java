@@ -19,18 +19,18 @@ public class User {
     private Long id;
 
     @Column(nullable = false)
-    private String username;
+    private String username; // 사용자 이름
 
     @Column(nullable = false, unique = true)
-    private String userId;
+    private String userId; // 사용자 ID
 
     @Column(nullable = false)
-    private String password;
+    private String password; // 사용자 비밀 번호
 
     @Column(nullable = false, unique = true)
-    private String email;
+    private String email; // 사용자 Email
 
     @Column(nullable = false)
     @Enumerated(EnumType.STRING)
-    private Authority authority;
+    private Authority authority; // 사용자 권한
 }
