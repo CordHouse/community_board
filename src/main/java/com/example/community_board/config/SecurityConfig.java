@@ -7,6 +7,7 @@ import com.example.community_board.jwt.TokenProvider;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.security.config.annotation.method.configuration.EnableGlobalMethodSecurity;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.http.SessionCreationPolicy;
@@ -16,6 +17,7 @@ import org.springframework.security.web.SecurityFilterChain;
 @EnableWebSecurity
 @Configuration
 @RequiredArgsConstructor
+//@EnableGlobalMethodSecurity(prePostEnabled = true)
 public class SecurityConfig {
 
     private final TokenProvider tokenProvider;
@@ -40,8 +42,9 @@ public class SecurityConfig {
 
                 and().
                 authorizeRequests().
+                antMatchers("/api/admin").access("hasRole('ROLE_ADMIN')").
+                antMatchers("/api/auth/**").access("hasRole('ROLE_USER')").
                 antMatchers("/api/**").permitAll().
-                anyRequest().authenticated().
 
                 and().
                 apply(new JwtSecureConfig(tokenProvider));
