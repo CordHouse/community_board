@@ -54,40 +54,41 @@ public class TokenProvider implements InitializingBean {
 
     public TokenDto createToken(Authentication authentication) {
         String authorities = authentication.getAuthorities().stream()
-                .map(GrantedAuthority::getAuthority).collect(Collectors.joining(","));
+                .map(GrantedAuthority::getAuthority)
+                .collect(Collectors.joining(","));
 
-        Long now = new Date().getTime();
+        long now = (new Date()).getTime();
 
-        Date expire = new Date(now + this.tokenValidationTime); // 토큰의 유효 기간 설정
+        Date expire = new Date(now + tokenValidationTime); // 토큰의 유효 기간 설정
 
-        Date refreshExpire = new Date(now + this.refreshTokenValidationTime);
+        Date refreshExpire = new Date(now + refreshTokenValidationTime);
 
         String originToken = Jwts.builder()
                             .setExpiration(expire)
                 .setSubject(authentication.getName())
                 .claim(AUTHORIZATION_KEY, authorities)
-                .signWith(this.key, SignatureAlgorithm.HS512)
+                .signWith(key, SignatureAlgorithm.HS512)
                 .compact();
 
         String refreshToken = Jwts.builder()
                 .setExpiration(refreshExpire)
-                .signWith(this.key, SignatureAlgorithm.HS512)
+                .signWith(key, SignatureAlgorithm.HS512)
                 .compact();
 
         return TokenDto.builder()
                 .originToken(originToken)
                 .validationTime(expire.getTime())
                 .refreshToken(refreshToken)
-                .grantedType("BEARER ")
+                .grantedType("Bearer ")
                 .build();
     }
 
     public Authentication getAuthentication(String token) {
         Claims claims = Jwts.parserBuilder()
-                .setSigningKey(this.key).build()
+                .setSigningKey(key).build()
                 .parseClaimsJws(token).getBody();
 
-        if(claims == null) {
+        if(claims.get(AUTHORIZATION_KEY) == null) {
             throw new RuntimeException("해당 클레임에 정보가 존재하지 않습니다.");
         }
 
@@ -97,12 +98,12 @@ public class TokenProvider implements InitializingBean {
 
         User principal = new User(claims.getSubject(), "", authorities);
 
-        return new UsernamePasswordAuthenticationToken(principal, token, authorities);
+        return new UsernamePasswordAuthenticationToken(principal, "", authorities);
     }
 
     public boolean validateToken(String token) {
         try{
-            Jwts.parserBuilder().setSigningKey(this.key).build().parseClaimsJws(token);
+            Jwts.parserBuilder().setSigningKey(key).build().parseClaimsJws(token);
             return true;
         }
         catch(SecurityException | MalformedJwtException e) {
